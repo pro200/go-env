@@ -9,9 +9,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type Env struct {
-	isLoaded bool
-}
+var isLoaded bool
+
+type Env struct{}
 
 func New() (*Env, error) {
 	// 로딩 순위
@@ -36,14 +36,21 @@ func New() (*Env, error) {
 
 	for _, file := range envFiles {
 		if err := godotenv.Load(file); err == nil {
-			env := Env{
-				isLoaded: true,
-			}
+			isLoaded = true
+			env := Env{}
 			return &env, nil
 		}
 	}
 
 	return &Env{}, errors.New("not found ." + fileName + ".env or .config.env")
+}
+
+func GetEnv() (*Env, error) {
+	if !isLoaded {
+		return nil, errors.New("env not loaded. use env.New()")
+	}
+
+	return &Env{}, nil
 }
 
 func (e *Env) Get(key string) string {
