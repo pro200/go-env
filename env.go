@@ -46,36 +46,24 @@ func New() (*Env, error) {
 	return &Env{}, errors.New("not found ." + fileName + ".env or .config.env")
 }
 
-func (e *Env) Get(key string) (string, error) {
-	result := os.Getenv(key)
-	if result == "" {
-		return "", errors.New("no env " + key)
-	}
-
-	return result, nil
+func (e *Env) Get(key string) string {
+	return os.Getenv(key)
 }
 
-func (e *Env) GetInt(key string) (int, error) {
-	result, err := e.Get(key)
-	if err != nil {
-		return 0, err
-	}
-
-	return strconv.Atoi(result)
+func (e *Env) GetInt(key string) int {
+	result := e.Get(key)
+	data, _ := strconv.Atoi(result)
+	return data
 }
 
-func (e *Env) GetFloat(key string) (float64, error) {
-	result, err := e.Get(key)
-	if err != nil {
-		return 0, nil
-	}
-	return strconv.ParseFloat(result, 64)
+func (e *Env) GetFloat(key string) float64 {
+	result := e.Get(key)
+	data, _ := strconv.ParseFloat(result, 64)
+	return data
 }
 
-func (e *Env) GetBool(key string) (bool, error) {
-	result, err := e.Get(key)
-	if err != nil {
-		return false, nil
-	}
-	return strconv.ParseBool(result)
+func (e *Env) GetBool(key string) bool {
+	result := e.Get(key)
+	data, _ := strconv.ParseBool(result)
+	return data
 }

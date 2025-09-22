@@ -17,20 +17,9 @@ func TestEnv(t *testing.T) {
 		t.Error(err)
 	}
 
-	strVal, err := data.Get("STRING")
-	if err != nil {
-		t.Error(err)
-	}
-
-	intVal, err := data.GetInt("INT")
-	if err != nil {
-		t.Error(err)
-	}
-
-	floatVal, err := data.GetFloat("FLOAT")
-	if err != nil {
-		t.Error(err)
-	}
+	strVal := data.Get("STRING")
+	intVal := data.GetInt("INT")
+	floatVal := data.GetFloat("FLOAT")
 
 	if strVal != "hello" || intVal != 1234 || floatVal != 12.34 {
 		t.Error("Wrong result")
