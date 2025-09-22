@@ -9,20 +9,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var isLoadedEnv = false
-var ENV = map[string]string{}
+type Env struct {
+	isLoaded bool
+}
 
-func Init(env ...map[string]string) error {
-	if isLoadedEnv {
-		return errors.New("env already initialized")
-	}
-
-	if len(env) > 0 {
-		isLoadedEnv = true
-		ENV = env[0]
-		return nil
-	}
-
+func New() (*Env, error) {
 	// 로딩 순위
 	// 1. 현재 디렉토리의 .파일명.env
 	// 2. 현재 디렉토리의 .config.env
@@ -31,11 +22,7 @@ func Init(env ...map[string]string) error {
 	exPaths := strings.Split(os.Args[0], "/")
 	fileName := exPaths[len(exPaths)-1]
 
-	path, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
+	path, _ := os.Getwd()
 	paths := strings.Split(path, "/")
 
 	envFiles := []string{
@@ -49,23 +36,17 @@ func Init(env ...map[string]string) error {
 
 	for _, file := range envFiles {
 		if err := godotenv.Load(file); err == nil {
-			isLoadedEnv = true
-			return nil
+			env := Env{
+				isLoaded: true,
+			}
+			return &env, nil
 		}
 	}
 
-	return errors.New("not found ." + fileName + ".env or .config.env")
+	return &Env{}, errors.New("not found ." + fileName + ".env or .config.env")
 }
 
-func Get(key string) (string, error) {
-	if !isLoadedEnv {
-		return "", errors.New("env not initialized")
-	}
-
-	if result, ok := ENV[key]; ok {
-		return result, nil
-	}
-
+func (e *Env) Get(key string) (string, error) {
 	result := os.Getenv(key)
 	if result == "" {
 		return "", errors.New("no env " + key)
@@ -74,8 +55,8 @@ func Get(key string) (string, error) {
 	return result, nil
 }
 
-func GetInt(key string) (int, error) {
-	result, err := Get(key)
+func (e *Env) GetInt(key string) (int, error) {
+	result, err := e.Get(key)
 	if err != nil {
 		return 0, err
 	}
@@ -83,10 +64,18 @@ func GetInt(key string) (int, error) {
 	return strconv.Atoi(result)
 }
 
-func GetFloat(key string) (float64, error) {
-	result, err := Get(key)
+func (e *Env) GetFloat(key string) (float64, error) {
+	result, err := e.Get(key)
 	if err != nil {
 		return 0, nil
 	}
 	return strconv.ParseFloat(result, 64)
+}
+
+func (e *Env) GetBool(key string) (bool, error) {
+	result, err := e.Get(key)
+	if err != nil {
+		return false, nil
+	}
+	return strconv.ParseBool(result)
 }

@@ -7,27 +7,27 @@ import (
 )
 
 func TestEnv(t *testing.T) {
-	err := env.Init(map[string]string{
-		"STRING": "hello",
-		"INT":    "1234",
-		"FLOAT":  "12.34",
-	})
+	// .config.env
+	// STRING: hello
+	// INT:    1234
+	// FLOAT:  12.34
 
+	data, err := env.New()
 	if err != nil {
 		t.Error(err)
 	}
 
-	strVal, err := env.Get("STRING")
+	strVal, err := data.Get("STRING")
 	if err != nil {
 		t.Error(err)
 	}
 
-	intVal, err := env.GetInt("INT")
+	intVal, err := data.GetInt("INT")
 	if err != nil {
 		t.Error(err)
 	}
 
-	floatVal, err := env.GetFloat("FLOAT")
+	floatVal, err := data.GetFloat("FLOAT")
 	if err != nil {
 		t.Error(err)
 	}
