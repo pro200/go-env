@@ -13,7 +13,10 @@ FLOAT:  12.34
 */
 
 func TestEnv(t *testing.T) {
-	data := env.New()
+	data, err := env.New()
+	if err != nil {
+		t.Error("env load error:", err)
+	}
 
 	strVal := data.Get("STRING")
 	intVal := data.GetInt("INT")

@@ -16,7 +16,7 @@ type Env struct {
 
 var GlobalEnv *Env
 
-func New() *Env {
+func New() (*Env, error) {
 	// 로딩 순위
 	// ./.파일명.env
 	// ./.config.env
@@ -24,13 +24,13 @@ func New() *Env {
 
 	execPath, err := os.Executable()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	fileName := filepath.Base(execPath)
 
 	wd, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	paths := strings.Split(wd, string(os.PathSeparator))
 
@@ -48,7 +48,7 @@ func New() *Env {
 	for _, file := range envFiles {
 		if err := godotenv.Load(file); err == nil {
 			GlobalEnv = &Env{loaded: true}
-			return GlobalEnv
+			return GlobalEnv, nil
 		}
 	}
 
