@@ -3,54 +3,64 @@ package env
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/joho/godotenv"
 )
 
-var isLoaded bool
+type Env struct {
+	loaded bool
+}
 
-type Env struct{}
+var GlobalEnv *Env
 
-func New() (*Env, error) {
+func New() *Env {
 	// 로딩 순위
-	// 1. 현재 디렉토리의 .파일명.env
-	// 2. 현재 디렉토리의 .config.env
-	// 3. 상위 디렉토리의 .config.env
+	// ./.파일명.env
+	// ./.config.env
+	// ../.config.env
 
-	exPaths := strings.Split(os.Args[0], "/")
-	fileName := exPaths[len(exPaths)-1]
+	execPath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	fileName := filepath.Base(execPath)
 
-	path, _ := os.Getwd()
-	paths := strings.Split(path, "/")
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	paths := strings.Split(wd, string(os.PathSeparator))
 
 	envFiles := []string{
-		strings.Join(paths, "/") + "/." + fileName + ".env",
-		strings.Join(paths, "/") + "/.config.env",
+		filepath.Join(wd, "."+fileName+".env"),
+		filepath.Join(wd, ".config.env"),
 	}
 
 	if len(paths) > 1 {
-		envFiles = append(envFiles, strings.Join(paths[:len(paths)-1], "/")+"/.config.env")
+		envFiles = append(envFiles,
+			filepath.Join(strings.Join(paths[:len(paths)-1], string(os.PathSeparator)), ".config.env"),
+		)
 	}
 
 	for _, file := range envFiles {
 		if err := godotenv.Load(file); err == nil {
-			isLoaded = true
-			env := Env{}
-			return &env, nil
+			GlobalEnv = &Env{loaded: true}
+			return GlobalEnv
 		}
 	}
 
-	return &Env{}, errors.New("not found ." + fileName + ".env or .config.env")
+	panic("not found ." + fileName + ".env or .config.env")
 }
 
 func GetEnv() (*Env, error) {
-	if !isLoaded {
-		return nil, errors.New("env not loaded. use env.New()")
+	if !GlobalEnv.loaded {
+		return nil, errors.New("env not loaded")
 	}
 
-	return &Env{}, nil
+	return GlobalEnv, nil
 }
 
 func (e *Env) Get(key string) string {
