@@ -2,6 +2,7 @@ package env
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -16,12 +17,27 @@ type Env struct {
 
 var GlobalEnv *Env
 
-func New() (*Env, error) {
+func New(path ...string) (*Env, error) {
+	// from path
+	if len(path) > 0 {
+		fullPath, err := filepath.Abs(path[0])
+		fmt.Println(fullPath)
+		if err != nil {
+			return nil, err
+		}
+
+		if err := godotenv.Load(fullPath); err == nil {
+			GlobalEnv = &Env{loaded: true}
+			return GlobalEnv, nil
+		} else {
+			return nil, errors.New(ERROR_NOT_FOUND)
+		}
+	}
+
 	// 로딩 순위
 	// ./.파일명.env
 	// ./.config.env
 	// ../.config.env
-
 	execPath, err := os.Executable()
 	if err != nil {
 		return nil, err
@@ -52,11 +68,75 @@ func New() (*Env, error) {
 		}
 	}
 
-	panic("not found ." + fileName + ".env or .config.env")
+	return nil, errors.New(ERROR_NOT_FOUND)
+}
+
+// .env 로드 실패시 값을 받아 새로 생성
+func MakeEnv(defaults map[string]string, path ...string) (*Env, error) {
+	if GlobalEnv != nil && GlobalEnv.loaded {
+		return nil, errors.New("env already loaded")
+	}
+
+	// 입력 받기
+	fmt.Println("Create a new .config.env file.")
+	fmt.Println()
+
+	var lines []string
+	for key, value := range defaults {
+		var input string
+		fmt.Printf("%s [%s]:", key, value)
+		fmt.Scanln(&input)
+
+		// 기본값 사용
+		if input == "" {
+			input = value
+		}
+
+		lines = append(lines, key+": "+input)
+	}
+
+	// 저장 여부 확인
+	var confirm string
+	fmt.Print("\nWould you like to save it?  [y|N]")
+	fmt.Scanln(&confirm)
+
+	if strings.ToLower(confirm) != "y" {
+		return nil, errors.New("Creating a new env file was canceled.")
+	}
+
+	// 파일 저장
+	var fullPath string
+	var err error
+
+	if len(path) > 0 {
+		fullPath, err = filepath.Abs(path[0])
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		wd, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
+		paths := strings.Split(wd, string(os.PathSeparator))
+		fullPath = filepath.Join(strings.Join(paths, string(os.PathSeparator)), ".config.env")
+	}
+
+	// write file to fullPath
+	if err := os.WriteFile(fullPath, []byte(strings.Join(lines, "\n")), 0644); err != nil {
+		return nil, err
+	}
+
+	if err := godotenv.Load(fullPath); err == nil {
+		GlobalEnv = &Env{loaded: true}
+		return GlobalEnv, nil
+	}
+
+	return nil, errors.New("Failed to save the env file.")
 }
 
 func GetEnv() (*Env, error) {
-	if !GlobalEnv.loaded {
+	if GlobalEnv == nil || !GlobalEnv.loaded {
 		return nil, errors.New("env not loaded")
 	}
 

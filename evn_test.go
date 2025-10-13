@@ -6,16 +6,11 @@ import (
 	"github.com/pro200/go-env"
 )
 
-/* .config.env
-STRING: hello
-INT:    1234
-FLOAT:  12.34
-*/
-
 func TestEnv(t *testing.T) {
 	data, err := env.New()
 	if err != nil {
 		t.Error("env load error:", err)
+		return
 	}
 
 	strVal := data.Get("STRING")
