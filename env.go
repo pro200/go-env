@@ -17,7 +17,7 @@ type Env struct {
 
 var GlobalEnv *Env
 
-// Key: value key or print, comment
+// Key: 비어 있으면 Val이 주석 및 출력문으로 처리됩니다.
 type Default struct {
 	Key string
 	Val string
@@ -92,11 +92,8 @@ func MakeEnv(defaults []Default, path ...string) (*Env, error) {
 		key := strings.ToUpper(defaults[i].Key)
 		value := defaults[i].Val
 
-		if key == "PRINT" {
-			fmt.Println(value)
-			continue
-		}
-		if key == "COMMENT" {
+		if key == "" {
+			fmt.Println("# " + value)
 			lines = append(lines, "# "+value)
 			continue
 		}

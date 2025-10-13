@@ -18,8 +18,8 @@ func main() {
 
 		// env not found, make new env with default values
 		defaults := []env.Default{
-			{"comment", "commnet env file~~~~\n"},
-			{"NAME", "pro200"},
+			{"", "make new env file with default values"},
+			{"name", "pro200"},
 			{"EMAIL", "pro200@gmial.com"},
 			{"AGE", "123"},
 		}
