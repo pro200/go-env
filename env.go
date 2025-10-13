@@ -17,6 +17,12 @@ type Env struct {
 
 var GlobalEnv *Env
 
+// Key: value key or print, comment
+type Default struct {
+	Key string
+	Val string
+}
+
 func New(path ...string) (*Env, error) {
 	// from path
 	if len(path) > 0 {
@@ -72,7 +78,7 @@ func New(path ...string) (*Env, error) {
 }
 
 // .env 로드 실패시 값을 받아 새로 생성
-func MakeEnv(defaults map[string]string, path ...string) (*Env, error) {
+func MakeEnv(defaults []Default, path ...string) (*Env, error) {
 	if GlobalEnv != nil && GlobalEnv.loaded {
 		return nil, errors.New("env already loaded")
 	}
@@ -82,7 +88,19 @@ func MakeEnv(defaults map[string]string, path ...string) (*Env, error) {
 	fmt.Println()
 
 	var lines []string
-	for key, value := range defaults {
+	for i := range defaults {
+		key := strings.ToUpper(defaults[i].Key)
+		value := defaults[i].Val
+
+		if key == "PRINT" {
+			fmt.Println(value)
+			continue
+		}
+		if key == "COMMENT" {
+			lines = append(lines, "# "+value)
+			continue
+		}
+
 		var input string
 		fmt.Printf("%s [%s]:", key, value)
 		fmt.Scanln(&input)

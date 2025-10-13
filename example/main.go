@@ -17,11 +17,13 @@ func main() {
 		}
 
 		// env not found, make new env with default values
-		defaults := map[string]string{
-			"NAME":  "pro200",
-			"EMAIL": "pro200@gmail.com",
-			"AGE":   "123",
+		defaults := []env.Default{
+			{"comment", "commnet env file~~~~\n"},
+			{"NAME", "pro200"},
+			{"EMAIL", "pro200@gmial.com"},
+			{"AGE", "123"},
 		}
+
 		data, err = env.MakeEnv(defaults, configFile)
 		if err != nil {
 			utils.Exit("env make error: ", err)
