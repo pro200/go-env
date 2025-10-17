@@ -24,7 +24,7 @@ func main() {
 			{"AGE", "123"},
 		}
 
-		data, err = env.MakeEnv(defaults, configFile)
+		data, err = env.Create(defaults, configFile)
 		if err != nil {
 			utils.Exit("env make error: ", err)
 		}

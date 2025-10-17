@@ -78,7 +78,7 @@ func New(path ...string) (*Env, error) {
 }
 
 // .env 로드 실패시 값을 받아 새로 생성
-func MakeEnv(defaults []Default, path ...string) (*Env, error) {
+func Create(defaults []Default, path ...string) (*Env, error) {
 	if GlobalEnv != nil && GlobalEnv.loaded {
 		return nil, errors.New("env already loaded")
 	}
@@ -154,7 +154,7 @@ func MakeEnv(defaults []Default, path ...string) (*Env, error) {
 	return nil, errors.New("Failed to save the env file.")
 }
 
-func GetEnv() (*Env, error) {
+func Get() (*Env, error) {
 	if GlobalEnv == nil || !GlobalEnv.loaded {
 		return nil, errors.New("env not loaded")
 	}
