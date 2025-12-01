@@ -154,7 +154,8 @@ func Create(defaults []Default, path ...string) (*Env, error) {
 	return nil, errors.New("Failed to save the env file.")
 }
 
-func Get() (*Env, error) {
+// 전역 Env 반환
+func Load() (*Env, error) {
 	if GlobalEnv == nil || !GlobalEnv.loaded {
 		return nil, errors.New("env not loaded")
 	}
