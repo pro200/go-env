@@ -2,7 +2,6 @@ package env
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -18,7 +17,6 @@ type Env struct {
 func NewEnv(path ...string) (*Env, error) {
 	// 이미 로드된 경우
 	if envPath := os.Getenv("ENV_PATH"); envPath != "" {
-		fmt.Println(envPath)
 		return &Env{loaded: true}, nil
 	}
 
