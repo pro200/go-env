@@ -7,7 +7,7 @@ import (
 )
 
 func TestEnv(t *testing.T) {
-	data, err := env.New()
+	data, err := env.NewEnv()
 	if err != nil {
 		t.Error("env load error:", err)
 		return
