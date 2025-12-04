@@ -1,6 +1,2 @@
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
-github.com/pro200/go-utils v1.0.5 h1:VnoCWh6nPPvq8/T07IHSOMxM4BcS5BqdJ8Cu9fHtQCg=
-github.com/pro200/go-utils v1.0.5/go.mod h1:BYd2+OjudTUzwQ+V0By0Jp9vsjT5iDgQpTYzT5Zxi6c=
-github.com/soellman/pidfile v0.0.0-20160225184504-d482c905736b h1:iIk2ziBApy8Qf6KuoKoVqFOYCmQICxsrRNyry/IQH1k=
-github.com/soellman/pidfile v0.0.0-20160225184504-d482c905736b/go.mod h1:Cl3hBycyq3EjWqsRkNkbhDKYiB7SEfwRIXLKDcULwb4=
