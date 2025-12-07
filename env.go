@@ -34,10 +34,7 @@ func NewEnv(path ...string) (*Env, error) {
 		}
 	}
 
-	// 로딩 순위
-	// ./.파일명.env
-	// ./.config.env
-	// ../.config.env
+	// 로딩 순위 - ./.파일명.env -> ./.config.env -> ../.config.env
 	execPath, err := os.Executable()
 	if err != nil {
 		return nil, err
