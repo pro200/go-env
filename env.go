@@ -85,6 +85,15 @@ func (e *Env) GetInt(key string, defaultVal ...int) int {
 	return data
 }
 
+func (e *Env) GetInt64(key string, defaultVal ...int64) int64 {
+	result := e.Get(key)
+	if result == "" && len(defaultVal) > 0 {
+		return defaultVal[0]
+	}
+	data, _ := strconv.ParseInt(result, 10, 64)
+	return data
+}
+
 func (e *Env) GetFloat(key string, defaultVal ...float64) float64 {
 	result := e.Get(key)
 	if result == "" && len(defaultVal) > 0 {
