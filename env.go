@@ -2,6 +2,7 @@ package env
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -29,9 +30,9 @@ func NewEnv(path ...string) (*Env, error) {
 
 		if err := godotenv.Load(fullPath); err == nil {
 			return &Env{loaded: true}, nil
-		} else {
-			return nil, errors.New(ERROR_NOT_FOUND)
 		}
+
+		return nil, errors.New(ERROR_NOT_FOUND)
 	}
 
 	// 로딩 순위 - ./.파일명.env -> ./.config.env -> ../.config.env
@@ -39,7 +40,11 @@ func NewEnv(path ...string) (*Env, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	fileName := filepath.Base(execPath)
+	if strings.HasPrefix(fileName, "___go_") {
+		return nil, fmt.Errorf("this file name \"%s\" not supported", fileName)
+	}
 
 	wd, err := os.Getwd()
 	if err != nil {
