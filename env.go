@@ -83,19 +83,31 @@ func (e *Env) Get(key string, defaultVal ...string) string {
 
 func (e *Env) GetInt(key string, defaultVal ...int) int {
 	result := e.Get(key)
-	if result == "" && len(defaultVal) > 0 {
+	if result == "" {
+		if len(defaultVal) > 0 {
+			return defaultVal[0]
+		}
+		return 0
+	}
+	data, err := strconv.Atoi(result)
+	if err != nil && len(defaultVal) > 0 {
 		return defaultVal[0]
 	}
-	data, _ := strconv.Atoi(result)
 	return data
 }
 
 func (e *Env) GetInt64(key string, defaultVal ...int64) int64 {
 	result := e.Get(key)
-	if result == "" && len(defaultVal) > 0 {
+	if result == "" {
+		if len(defaultVal) > 0 {
+			return defaultVal[0]
+		}
+		return 0
+	}
+	data, err := strconv.ParseInt(result, 10, 64)
+	if err != nil && len(defaultVal) > 0 {
 		return defaultVal[0]
 	}
-	data, _ := strconv.ParseInt(result, 10, 64)
 	return data
 }
 
@@ -104,15 +116,24 @@ func (e *Env) GetFloat(key string, defaultVal ...float64) float64 {
 	if result == "" && len(defaultVal) > 0 {
 		return defaultVal[0]
 	}
-	data, _ := strconv.ParseFloat(result, 64)
+	data, err := strconv.ParseFloat(result, 64)
+	if err != nil && len(defaultVal) > 0 {
+		return defaultVal[0]
+	}
 	return data
 }
 
 func (e *Env) GetBool(key string, defaultVal ...bool) bool {
 	result := e.Get(key)
-	if result == "" && len(defaultVal) > 0 {
+	if result == "" {
+		if len(defaultVal) > 0 {
+			return defaultVal[0]
+		}
+		return false
+	}
+	data, err := strconv.ParseBool(result)
+	if err != nil && len(defaultVal) > 0 {
 		return defaultVal[0]
 	}
-	data, _ := strconv.ParseBool(result)
 	return data
 }
